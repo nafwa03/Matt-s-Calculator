@@ -21,6 +21,16 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int findMax(int... vals) {
+        int max = 0;
+
+        for (int d : vals) {
+            if (d > max) max = d;
+        }
+
+        return max;
+    }
+
     public static String fmt(double d)
     {
         if(d == (long) d)
@@ -66,13 +76,40 @@ public class MainActivity extends AppCompatActivity {
         buttonDot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final TextView output = (TextView) findViewById(R.id.editText);
+                int max = 0;
+                int plusIndex = 0;
+                int minusIndex = 0;
+                int multIndex = 0;
+                int divIndex = 0;
+                if (output.getText().toString().contains("+")) {
+                    plusIndex = output.getText().toString().lastIndexOf("+");
+                }
+                if (output.getText().toString().contains("-")) {
+                    minusIndex = output.getText().toString().lastIndexOf("-");
+                }
+                if (output.getText().toString().contains("×")) {
+                    multIndex = output.getText().toString().lastIndexOf("×");
+                }
+                if (output.getText().toString().contains("÷")) {
+                    divIndex = output.getText().toString().lastIndexOf("÷");
+                }
+                max = findMax(plusIndex, minusIndex, multIndex, divIndex);
+
                 if (output.getText().toString().endsWith("+") || output.getText().toString().endsWith("-") || output.getText().toString().endsWith("×") ||
                         output.getText().toString().endsWith("÷") || output.getText().toString().endsWith(".")) {
                     //do nothing
-                } else {
+                }
+                else if(output.getText().toString().contains(".") && (!(output.getText().toString().contains("+")) && !(output.getText().toString().contains("-")) && !(output.getText().toString().contains("×")) &&
+                        !(output.getText().toString().contains("÷")))) {
+                    //do nothing
+                }
+                else if ((output.getText().toString().contains("+") || output.getText().toString().contains("-") || output.getText().toString().contains("×") ||
+                        output.getText().toString().contains("÷")) && (output.getText().toString().substring(max).contains("."))) {
+                    //do nothing
+                }
+                else {
                     output.append(".");
                 }
-
                 final HorizontalScrollView hzn = (HorizontalScrollView) findViewById(R.id.horizontalScrollView1);
                 output.post(new Runnable() {
                     @Override
@@ -469,7 +506,11 @@ public class MainActivity extends AppCompatActivity {
                                     foo.remove(j);
                                     j = j - 1;
                                 } else if (foo.get(j).equals(minus)) {
-                                    Double first = Double.parseDouble(foo.get(j - 1));
+                                    Double first = 0.0;
+                                    if(foo.get(0).equals("")) {
+                                        foo.set(0, "0.0");
+                                    }
+                                    first = Double.parseDouble(foo.get(j - 1));
                                     Double second = Double.parseDouble(foo.get(j + 1));
                                     Double result = first - second;
                                     foo.set(j - 1, Double.toString(result));
